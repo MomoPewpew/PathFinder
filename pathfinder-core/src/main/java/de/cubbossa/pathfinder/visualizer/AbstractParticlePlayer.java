@@ -52,7 +52,7 @@ public abstract class AbstractParticlePlayer<LocationT> extends TimerTask implem
    */
   @Getter
   @Setter
-  private int updateIncrement = 1;
+  private int updateIncrement = 999;
 
   private Timer timer;
   private final AtomicInteger currentStep = new AtomicInteger(0);
