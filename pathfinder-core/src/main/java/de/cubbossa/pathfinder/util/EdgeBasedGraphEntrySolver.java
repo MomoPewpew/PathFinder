@@ -109,7 +109,7 @@ public class EdgeBasedGraphEntrySolver implements GraphEntrySolver<Node> {
       if (maxDistance != null && Math.pow(maxDistance, 2) < d) {
         return;
       }
-      edges.add(new WeightedEdge(e.nodeU(), e.nodeV(), p, d));
+      edges.add(new WeightedEdge(e.nodeU(), e.nodeV(), p, d * 1000000));
     });
     if (edges.isEmpty()) {
       // None of the edges was close enough to the target point
