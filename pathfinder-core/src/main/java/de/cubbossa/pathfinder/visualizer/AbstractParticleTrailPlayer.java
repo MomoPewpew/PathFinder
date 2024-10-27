@@ -16,15 +16,9 @@ public class AbstractParticleTrailPlayer<LocationT> implements Disposable {
   private int lowerBound = 0;
   @Getter
   private int upperBound = 0;
-  final Point<LocationT>[] points;
+  private final Point<LocationT>[] points;
 
   public AbstractParticleTrailPlayer(AbstractParticlePlayer<LocationT> owner, List<Location> points) {
-	if (points == null) {
-		this.owner = null;
-		this.points = null;
-		return;
-	}
-
     Preconditions.checkArgument(!points.isEmpty());
     this.owner = owner;
     this.points = new Point[points.size()];
