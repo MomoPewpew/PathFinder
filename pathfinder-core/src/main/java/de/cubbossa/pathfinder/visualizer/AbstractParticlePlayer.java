@@ -132,6 +132,7 @@ public abstract class AbstractParticlePlayer<LocationT> extends TimerTask implem
       }
       // Make path update the newest path
       newestPath = new AbstractParticleTrailPlayer<>(this, pathUpdate);
+	  if (newestPath.points == null) return;
       PathFinder.get().getDisposer().register(this, newestPath);
       newestPath.setLowerBound(0);
       newestPath.setUpperBound(updateIncrement);
