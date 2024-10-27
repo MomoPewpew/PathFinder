@@ -125,7 +125,7 @@ public abstract class AbstractParticlePlayer<LocationT> extends TimerTask implem
 
 
     // Make sure to apply new path
-    if (pathUpdate != null) {
+    if (pathUpdate != null && !pathUpdate.isEmpty()) {
       // Add the previously newest path to the old paths
       if (newestPath != null) {
         oldPaths.add(newestPath);
