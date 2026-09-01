@@ -4,7 +4,7 @@ import de.cubbossa.disposables.Disposable;
 import de.cubbossa.pathfinder.command.FindPlayerManager;
 import de.cubbossa.pathfinder.command.PathFinderCommand;
 import dev.jorel.commandapi.CommandAPI;
-import dev.jorel.commandapi.CommandAPIBukkitConfig;
+import dev.jorel.commandapi.CommandAPIPaperConfig;
 import dev.jorel.commandapi.CommandTree;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +35,8 @@ public class CommandRegistry implements Disposable {
   }
 
   public void loadCommands() {
-    CommandAPI.onLoad(new CommandAPIBukkitConfig(PathFinderPlugin.getInstance())
-        .shouldHookPaperReload(true)
-//        .verboseOutput(true)
-//        .dispatcherFile(new File(PathFinderPlugin.getInstance().getDataFolder(), "cmds.json"))
-        .usePluginNamespace()
+    CommandAPI.onLoad(new CommandAPIPaperConfig(PathFinderPlugin.getInstance())
+        .setNamespace(PathFinderPlugin.getInstance().getName().toLowerCase())
         .missingExecutorImplementationMessage("Wrong command usage, use /help."));
   }
 

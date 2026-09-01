@@ -38,7 +38,6 @@ import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.LocationType;
 import dev.jorel.commandapi.arguments.NamespacedKeyArgument;
-import dev.jorel.commandapi.arguments.PlayerArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import dev.jorel.commandapi.arguments.TextArgument;
 import java.util.ArrayList;
@@ -84,12 +83,12 @@ public class Arguments {
         .map(s -> "<" + s + ">").toList());
   }
 
-  public CommandArgument<Player, PlayerArgument> player(String node) {
-    return new CommandArgument<>(new PlayerArgument(node));
+  public CommandArgument<Player, EntitySelectorArgument.OnePlayer> player(String node) {
+    return new CommandArgument<>(new EntitySelectorArgument.OnePlayer(node));
   }
 
   public CommandArgument<PathPlayer<Player>, CustomArgument<PathPlayer<Player>, Player>> pathPlayer(String node) {
-    return new CommandArgument<>(new CustomArgument<>(new PlayerArgument(node), info -> {
+    return new CommandArgument<>(new CustomArgument<>(new EntitySelectorArgument.OnePlayer(node), info -> {
       return BukkitUtils.wrap(info.currentInput());
     }));
   }

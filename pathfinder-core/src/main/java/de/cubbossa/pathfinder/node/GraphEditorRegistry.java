@@ -11,7 +11,7 @@ import de.cubbossa.pathfinder.util.ExtensionPoint;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import lombok.Getter;
 
 public class GraphEditorRegistry implements Disposable {

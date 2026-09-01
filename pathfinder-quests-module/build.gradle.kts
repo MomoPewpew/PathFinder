@@ -2,17 +2,25 @@ plugins {
     id("java")
 }
 
+val paperApiVersion = project.property("paper_api_version") as String
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+}
+
 repositories {
     mavenCentral()
-    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://libraries.minecraft.net")
     maven("https://jitpack.io")
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
     implementation("me.pikamug.quests:quests-core:5.0.5")
-    implementation("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:$paperApiVersion")
     implementation(project(":pathfinder-api"))
     implementation(project(":pathfinder-bukkit"))
 

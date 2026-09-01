@@ -1,51 +1,38 @@
 plugins {
-    id("io.freefair.lombok") version "6.6.2"
-    id("com.github.johnrengelman.shadow") version "8.1.0"
+    id("io.freefair.lombok") version "8.14.4"
+    id("com.gradleup.shadow") version "9.4.1"
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 }
 
-val minecraftVersion = project.property("minecraft_version") as String
+val paperApiVersion = project.property("paper_api_version") as String
 
 repositories {
     mavenCentral()
-    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-    maven("https://libraries.minecraft.net/")
-    maven("https://nexus.leonardbausenwein.de/repository/maven-public/")
-    maven("https://repo.dmulloy2.net/repository/public/")
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://repo.codemc.org/repository/maven-public/")
-    maven("https://repo.codemc.org/repository/maven-snapshots/")
-    maven("https://repo.codemc.io/repository/maven-snapshots/")
+    maven("https://libraries.minecraft.net/")
+    maven("https://repo.dmulloy2.net/repository/public/")
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
-
     compileOnly(project(":pathfinder-bukkit"))
     testImplementation(project(":pathfinder-bukkit"))
 
-    // Tests
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
 
-    // Spigot
     compileOnly("com.mojang:authlib:1.5.25")
-    testImplementation("org.spigotmc:spigot-api:$minecraftVersion-R0.1-SNAPSHOT")
+    testImplementation("io.papermc.paper:paper-api:$paperApiVersion")
 
-    // NBT
-    implementation("de.tr7zw:item-nbt-api:2.11.1")
-
-    // UI
-    implementation("de.cubbossa:MenuFramework:1.2")
-
-    // Precompiled Particles
+    implementation("de.tr7zw:item-nbt-api:2.16.0")
+    compileOnly(project(mapOf("path" to ":vendor-legacy-libs", "configuration" to "menuframeworkLibs")))
+    compileOnly(project(mapOf("path" to ":vendor-legacy-libs", "configuration" to "translationsLibs")))
     implementation("xyz.xenondevs:particle:1.8.4")
-
-    // Client ArmorStands
     implementation(files("../libs/ClientEntities-1.3.6.jar"))
 }
 
@@ -54,7 +41,6 @@ tasks {
         dependsOn(shadowJar)
     }
     processResources {
-        // Replace tokens in plugin.yml
         filter(
             org.apache.tools.ant.filters.ReplaceTokens::class,
             "tokens" to mapOf(
@@ -64,23 +50,22 @@ tasks {
         )
     }
     shadowJar {
-
         dependencies {
-            include(dependency("de.cubbossa:MenuFramework:.*"))
+            include(project(mapOf("path" to ":vendor-legacy-libs", "configuration" to "menuframeworkLibs")))
             include(dependency("de.cubbossa:ClientEntities:.*"))
             include(dependency("xyz.xenondevs:particle:.*"))
             include(dependency("de.tr7zw:item-nbt-api:.*"))
             include(dependency("de.item-nbt-api:.*"))
         }
 
-        fun relocate(from: String, to: String) {
-            relocate(from, "de.cubbossa.pathfinder.lib.$to", null)
+        fun relocateLib(from: String, to: String) {
+            relocate(from, "de.cubbossa.pathfinder.lib.$to")
         }
 
-        relocate("de.cubbossa.menuframework", "gui")
-        relocate("de.cubbossa.cliententities", "cliententities")
-        relocate("xyz.xenondevs.particle", "particle")
-        relocate("de.tr7zw.changeme.nbtapi", "nbtapi")
+        relocateLib("de.cubbossa.menuframework", "gui")
+        relocateLib("de.cubbossa.cliententities", "cliententities")
+        relocateLib("xyz.xenondevs.particle", "particle")
+        relocateLib("de.tr7zw.changeme.nbtapi", "nbtapi")
     }
     test {
         useJUnitPlatform()

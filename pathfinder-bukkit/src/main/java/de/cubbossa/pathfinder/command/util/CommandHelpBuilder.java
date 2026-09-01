@@ -20,27 +20,27 @@ public class CommandHelpBuilder {
     }
 
   public CommandHelpBuilder withCmd(String cmd, String desc) {
-    this.entries.add(new Entry(cmd, desc, null, ""));
+    this.entries.add(new Entry(cmd, desc, null));
     return this;
   }
 
   public CommandHelpBuilder withClickCmd(String cmd, String desc) {
-    this.entries.add(new Entry(cmd, desc, ClickEvent.Action.RUN_COMMAND, cmd));
+    this.entries.add(new Entry(cmd, desc, ClickEvent.runCommand(cmd)));
     return this;
   }
 
   public CommandHelpBuilder withClickCmd(String cmd, String clicked, String desc) {
-    this.entries.add(new Entry(cmd, desc, ClickEvent.Action.RUN_COMMAND, clicked));
+    this.entries.add(new Entry(cmd, desc, ClickEvent.runCommand(clicked)));
     return this;
   }
 
   public CommandHelpBuilder withSuggestCmd(String cmd, String desc) {
-    this.entries.add(new Entry(cmd, desc, ClickEvent.Action.SUGGEST_COMMAND, cmd));
+    this.entries.add(new Entry(cmd, desc, ClickEvent.suggestCommand(cmd)));
     return this;
   }
 
   public CommandHelpBuilder withSuggestCmd(String cmd, String suggest, String desc) {
-    this.entries.add(new Entry(cmd, desc, ClickEvent.Action.SUGGEST_COMMAND, suggest));
+    this.entries.add(new Entry(cmd, desc, ClickEvent.suggestCommand(suggest)));
     return this;
   }
 
@@ -48,9 +48,12 @@ public class CommandHelpBuilder {
     MiniMessage mm = PathFinder.get().getMiniMessage();
     List<Component> result = new ArrayList<>();
     for (Entry entry : entries) {
+      Component cmdComponent = Component.text(entry.cmd());
+      if (entry.clickEvent() != null) {
+        cmdComponent = cmdComponent.clickEvent(entry.clickEvent());
+      }
       TagResolver resolver = TagResolver.builder()
-          .resolver(Placeholder.component("cmd", Component.text(entry.cmd())
-              .clickEvent(ClickEvent.clickEvent(entry.action(), entry.actionInput()))))
+          .resolver(Placeholder.component("cmd", cmdComponent))
           .resolver(Placeholder.parsed("desc", entry.desc()))
           .build();
       result.add(mm.deserialize(format, resolver));
@@ -58,6 +61,6 @@ public class CommandHelpBuilder {
     return result;
   }
 
-  private record Entry(String cmd, String desc, ClickEvent.Action action, String actionInput) {
+  private record Entry(String cmd, String desc, ClickEvent clickEvent) {
   }
 }

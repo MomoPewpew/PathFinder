@@ -1,7 +1,7 @@
 package de.cubbossa.pathfinder.events.nodegroup;
 
 import de.cubbossa.pathfinder.nodegroup.NodeGroupImpl;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

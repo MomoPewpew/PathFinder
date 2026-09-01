@@ -4,7 +4,7 @@ import de.cubbossa.pathfinder.node.implementation.Waypoint;
 import de.cubbossa.pathfinder.nodegroup.NodeGroupImpl;
 import java.util.Date;
 import java.util.UUID;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.Cancellable;

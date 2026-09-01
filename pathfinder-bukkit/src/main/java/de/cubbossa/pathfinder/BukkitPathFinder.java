@@ -177,7 +177,7 @@ public class BukkitPathFinder extends AbstractPathFinder {
 
   @Override
   public String getVersion() {
-    return javaPlugin.getDescription().getVersion();
+    return javaPlugin.getPluginMeta().getVersion();
   }
 
   @Override

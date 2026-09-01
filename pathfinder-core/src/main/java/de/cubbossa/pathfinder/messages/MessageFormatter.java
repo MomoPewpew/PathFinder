@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.minimessage.MiniMessage;

@@ -3,68 +3,80 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 plugins {
     `java-library`
     `maven-publish`
-    id("com.github.johnrengelman.shadow") version "8.1.0"
-    id("io.freefair.lombok") version "6.6.2"
-    id("xyz.jpenilla.run-paper") version "2.0.1"
+    id("com.gradleup.shadow") version "9.4.1"
+    id("io.freefair.lombok") version "8.14.4"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
 }
 
 group = "de.cubbossa"
 
-
 val minecraftVersion = project.property("minecraft_version") as String
+val paperApiVersion = project.property("paper_api_version") as String
+val commandApiVersion = project.property("commandapi_version") as String
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 }
 
 repositories {
     mavenCentral()
-    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-    maven("https://nexus.leonardbausenwein.de/repository/maven-public/")
     maven("https://libraries.minecraft.net/")
     maven("https://repo.codemc.org/repository/maven-snapshots/")
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots")
+    maven {
+        url = uri("https://nexus.leonardbausenwein.de/repository/maven-public/")
+        content {
+            includeGroupByRegex("de\\.cubbossa")
+        }
+    }
 }
 
 dependencies {
 
     api(project(":pathfinder-api"))
     api(project(":pathfinder-core"))
-    api("de.cubbossa:disposables-bukkit:1.3")
-    runtimeOnly(project(path = ":pathfinder-editmode", configuration = "shadow"))
+    api(project(":vendor-disposables-bukkit"))
     runtimeOnly(project(":pathfinder-scripted-visualizer"))
 
-    // Spigot
-    compileOnlyApi("org.spigotmc:spigot-api:$minecraftVersion-R0.1-SNAPSHOT")
-    testImplementation("org.spigotmc:spigot-api:$minecraftVersion-R0.1-SNAPSHOT")
-    compileOnlyApi("com.mojang:brigadier:1.0.18")
-    testImplementation("com.mojang:brigadier:1.0.18")
+    compileOnlyApi("io.papermc.paper:paper-api:$paperApiVersion")
+    compileOnly(project(mapOf("path" to ":vendor-legacy-libs", "configuration" to "translationsLibs")))
+    compileOnly(project(mapOf("path" to ":vendor-legacy-libs", "configuration" to "splinelibLibs")))
+    testImplementation(project(mapOf("path" to ":vendor-legacy-libs", "configuration" to "translationsLibs")))
+    testImplementation(project(mapOf("path" to ":vendor-legacy-libs", "configuration" to "splinelibLibs")))
 
-    // Commands
-    api("dev.jorel:commandapi-bukkit-shade:9.7.0")
+    testImplementation("io.papermc.paper:paper-api:$paperApiVersion")
 
-    // Statistics
+    api("dev.jorel:commandapi-paper-shade:$commandApiVersion")
+
     implementation("org.bstats:bstats-bukkit:3.0.1")
 
-    // Tests
     testImplementation(project(":pathfinder-test-utils"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
-    testImplementation("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
-    testImplementation("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    // Utility
     implementation(files("generated/plugin-yml/Bukkit/plugin.yml"))
+}
+
+configurations {
+    create("legacyLibs") {
+        isCanBeConsumed = false
+        isCanBeResolved = true
+    }
+}
+
+dependencies {
+    add("legacyLibs", project(mapOf("path" to ":vendor-legacy-libs", "configuration" to "splinelibLibs")))
+    add("legacyLibs", project(mapOf("path" to ":vendor-legacy-libs", "configuration" to "translationsLibs")))
 }
 
 sourceSets {
     main {
-        // Include ANTLR generated sources
         java.srcDirs += file("build/generated-src/antlr/main")
         resources {
             exclude("*.db")
@@ -85,7 +97,7 @@ bukkit {
 
     main = "de.cubbossa.pathfinder.PathFinderPlugin"
 
-    apiVersion = "1.17"
+    apiVersion = "26.2"
 
     softDepend = listOf(
             "PlaceholderAPI",
@@ -101,8 +113,9 @@ bukkit {
             "org.snakeyaml:snakeyaml-engine:2.0",
             "com.zaxxer:HikariCP:5.0.1",
             "org.antlr:antlr4-runtime:4.12.0",
-        "org.jooq:jooq:3.16.23",
-            "com.github.ben-manes.caffeine:caffeine:3.1.6"
+            "org.jooq:jooq:3.16.23",
+            "com.github.ben-manes.caffeine:caffeine:3.1.6",
+            "io.github.toxicity188:adventure-platform-bukkit:5.2.0"
     )
 
     defaultPermission = BukkitPluginDescription.Permission.Default.OP
@@ -174,7 +187,6 @@ tasks {
         dependsOn(shadowJar)
     }
     processResources {
-        // Replace tokens in plugin.yml
         filter(
                 org.apache.tools.ant.filters.ReplaceTokens::class,
                 "tokens" to mapOf(
@@ -191,47 +203,43 @@ tasks {
         archiveFileName.set("PathFinder-${parent?.version}.jar")
         mergeServiceFiles()
         mergeServiceFiles {
-            setPath("META-INF/extensions.idx")
+            path = "META-INF/extensions.idx"
         }
 
-        // "whitelist" approach, only include transitive dependencies that are truly necessary.
-        // otherwise jar grows from ~8mb to ~30mb
+        project.configurations.getByName("legacyLibs").files.forEach { file ->
+            from(zipTree(file))
+        }
+
         dependencies {
             include(project(":pathfinder-api"))
             include(project(":pathfinder-core"))
             include(project(":pathfinder-graph"))
             include(project(":pathfinder-editmode"))
             include(project(":pathfinder-scripted-visualizer"))
-            include(dependency("de.cubbossa:disposables-api:.*"))
-            include(dependency("de.cubbossa:disposables-bukkit:.*"))
-            include(dependency("de.cubbossa:Translations:.*"))
-            include(dependency("de.cubbossa:splinelib:.*"))
-            include(dependency("net.kyori:.*"))
+            include(project(":vendor-disposables-api"))
+            include(project(":vendor-disposables-bukkit"))
             include(dependency("org.bstats:.*"))
             include(dependency("xyz.xenondevs:particle:.*"))
-            include(dependency("dev.jorel:commandapi-bukkit-shade:.*"))
+            include(dependency("dev.jorel:commandapi-paper-shade:.*"))
             include(dependency("de.exlll:configlib-yaml:.*"))
             include(dependency("de.exlll:configlib-core:.*"))
             include(dependency("org.flywaydb:flyway-core:.*"))
             include(dependency("org.pf4j:pf4j:.*"))
         }
 
-        fun relocate(from: String, to: String) {
-            relocate(from, "de.cubbossa.pathfinder.lib.$to", null)
+        fun relocateLib(from: String, to: String) {
+            relocate(from, "de.cubbossa.pathfinder.lib.$to")
         }
 
-        relocate("org.bstats", "bstats")
-        relocate("net.kyori", "kyori")
-        relocate("xyz.xenondevs.particle", "particle")
-        relocate("dev.jorel.commandapi", "commandapi")
-        relocate("de.cubbossa.translations", "translations")
-        relocate("de.cubbossa.splinelib", "splinelib")
-        relocate("de.cubbossa.disposables", "disposables")
-        relocate("xyz.xenondevs.particle", "particle")
-        relocate("dev.jorel.commandapi", "commandapi")
-        relocate("de.exlll", "exlll")
-        relocate("org.flywaydb", "flywaydb")
-        relocate("org.pf4j", "pf4j")
+        relocateLib("org.bstats", "bstats")
+        relocateLib("xyz.xenondevs.particle", "particle")
+        relocateLib("dev.jorel.commandapi", "commandapi")
+        relocateLib("de.cubbossa.translations", "translations")
+        relocateLib("de.cubbossa.splinelib", "splinelib")
+        relocateLib("de.cubbossa.disposables", "disposables")
+        relocateLib("de.exlll", "exlll")
+        relocateLib("org.flywaydb", "flywaydb")
+        relocateLib("org.pf4j", "pf4j")
     }
     test {
         useJUnitPlatform()

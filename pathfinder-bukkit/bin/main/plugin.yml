@@ -1,0 +1,84 @@
+name: PathFinder
+version: 5.4.2
+main: de.cubbossa.pathfinder.PathFinderPlugin
+author: CubBossa
+website: https://docs.leonardbausenwein.de
+libraries:
+ - org.openjdk.nashorn:nashorn-core:15.4
+ - org.snakeyaml:snakeyaml-engine:2.0
+ - com.zaxxer:HikariCP:5.0.1
+ - org.antlr:antlr4-runtime:4.12.0
+ - org.jooq:jooq:3.16.23
+ - com.github.ben-manes.caffeine:caffeine:3.1.6
+ - io.github.toxicity188:adventure-platform-bukkit:5.2.0
+permissions:
+  pathfinder.admin:
+    children:
+      pathfinder.command.pathfinder.*: true
+      pathfinder.command.roadmap.*: true
+      pathfinder.command.nodegroup.*: true
+      pathfinder.command.waypoint.*: true
+      pathfinder.command.visualizer.*: true
+  pathfinder.command.cancel_path:
+    default: "true"
+  pathfinder.command.discoveries:
+    default: "true"
+  pathfinder.command.find:
+    default: "true"
+  pathfinder.command.findlocation: {}
+  pathfinder.command.findplayer.accept: {}
+  pathfinder.command.findplayer.decline: {}
+  pathfinder.command.findplayer.request: {}
+  pathfinder.command.nodegroup.create: {}
+  pathfinder.command.nodegroup.delete: {}
+  pathfinder.command.nodegroup.list: {}
+  pathfinder.command.nodegroup.searchterms.add: {}
+  pathfinder.command.nodegroup.searchterms.list: {}
+  pathfinder.command.nodegroup.searchterms.remove: {}
+  pathfinder.command.nodegroup.set_findable: {}
+  pathfinder.command.nodegroup.set_name: {}
+  pathfinder.command.pathfinder.export: {}
+  pathfinder.command.pathfinder.help: {}
+  pathfinder.command.pathfinder.import: {}
+  pathfinder.command.pathfinder.info: {}
+  pathfinder.command.pathfinder.reload: {}
+  pathfinder.command.roadmap.create: {}
+  pathfinder.command.roadmap.delete: {}
+  pathfinder.command.roadmap.editmode: {}
+  pathfinder.command.roadmap.forcefind: {}
+  pathfinder.command.roadmap.forceforget: {}
+  pathfinder.command.roadmap.info: {}
+  pathfinder.command.roadmap.list: {}
+  pathfinder.command.roadmap.set_curvelength: {}
+  pathfinder.command.roadmap.set_name: {}
+  pathfinder.command.roadmap.set_visualizer: {}
+  pathfinder.command.visualizer.create: {}
+  pathfinder.command.visualizer.delete: {}
+  pathfinder.command.visualizer.edit: {}
+  pathfinder.command.visualizer.info: {}
+  pathfinder.command.visualizer.list: {}
+  pathfinder.command.visualizer.set_interval: {}
+  pathfinder.command.visualizer.set_name: {}
+  pathfinder.command.visualizer.set_permission: {}
+  pathfinder.command.waypoint.add_group: {}
+  pathfinder.command.waypoint.clear_groups: {}
+  pathfinder.command.waypoint.connect: {}
+  pathfinder.command.waypoint.create: {}
+  pathfinder.command.waypoint.delete: {}
+  pathfinder.command.waypoint.disconnect: {}
+  pathfinder.command.waypoint.info: {}
+  pathfinder.command.waypoint.list: {}
+  pathfinder.command.waypoint.remove_group: {}
+  pathfinder.command.waypoint.set_curve_length: {}
+  pathfinder.command.waypoint.tp: {}
+  pathfinder.command.waypoint.tphere: {}
+api-version: 26.2
+softdepend:
+ - PlaceholderAPI
+ - ProtocolLib
+ - ProtocolSupport
+ - ViaVersion
+ - ViaBackwards
+ - ViaRewind
+ - Geyser-Spigot
+default-permission: op

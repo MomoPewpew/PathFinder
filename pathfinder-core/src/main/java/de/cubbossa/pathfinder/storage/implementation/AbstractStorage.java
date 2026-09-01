@@ -8,7 +8,7 @@ import de.cubbossa.pathfinder.storage.WaypointStorageImplementation;
 import de.cubbossa.pathfinder.storage.WorldLoader;
 import de.cubbossa.pathfinder.visualizer.VisualizerTypeRegistry;
 import java.util.logging.Logger;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 

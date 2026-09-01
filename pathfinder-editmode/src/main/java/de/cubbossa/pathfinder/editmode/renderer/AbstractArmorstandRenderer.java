@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
