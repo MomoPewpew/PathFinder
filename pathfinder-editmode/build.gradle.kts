@@ -46,7 +46,7 @@ dependencies {
     implementation("xyz.xenondevs:particle:1.8.4")
 
     // Client ArmorStands
-    implementation("de.cubbossa:ClientEntities:1.3.6")
+    implementation(files("../libs/ClientEntities-1.3.6.jar"))
 }
 
 tasks {
